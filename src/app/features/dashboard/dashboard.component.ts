@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { StockService } from '../../core/services/stock.service';
@@ -25,18 +25,18 @@ import { StockCardComponent } from './components/stock-card/stock-card.component
         <div class="header-right">
           <span class="live-dot"></span>
           <span class="live-label">LIVE</span>
-          <span class="last-updated">{{ allTrades.length }} signals loaded</span>
+          <span class="last-updated">{{ allTrades().length }} signals loaded</span>
         </div>
       </header>
 
       <!-- Stats -->
-      <app-stats-bar [trades]="filteredTrades"></app-stats-bar>
+      <app-stats-bar [trades]="filteredTrades()"></app-stats-bar>
 
       <!-- Filters -->
       <app-filter-bar (filterChange)="onFilterChange($event)"></app-filter-bar>
 
       <!-- Loading State -->
-      @if (loading) {
+      @if (loading()) {
         <div class="loading-state">
           <div class="spinner"></div>
           <span>Fetching swing trades…</span>
@@ -44,15 +44,15 @@ import { StockCardComponent } from './components/stock-card/stock-card.component
       }
 
       <!-- Error State -->
-      @if (error) {
+      @if (error()) {
         <div class="error-state">
           <span class="error-icon">⚠️</span>
-          <span>{{ error }}</span>
+          <span>{{ error() }}</span>
         </div>
       }
 
       <!-- Empty State -->
-      @if (!loading && !error && filteredTrades.length === 0) {
+      @if (!loading() && !error() && filteredTrades().length === 0) {
         <div class="empty-state">
           <span class="empty-icon">🔍</span>
           <p>No trades match your current filters.</p>
@@ -61,9 +61,9 @@ import { StockCardComponent } from './components/stock-card/stock-card.component
       }
 
       <!-- Cards Grid -->
-      @if (!loading && filteredTrades.length > 0) {
+      @if (!loading() && filteredTrades().length > 0) {
         <div class="cards-grid">
-          @for (trade of filteredTrades; track trade.id) {
+          @for (trade of filteredTrades(); track trade.id) {
             <app-stock-card [trade]="trade"></app-stock-card>
           }
         </div>
@@ -73,11 +73,22 @@ import { StockCardComponent } from './components/stock-card/stock-card.component
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  allTrades: StockSignal[] = [];
-  filteredTrades: StockSignal[] = [];
-  loading = true;
-  error: string | null = null;
-  private activeFilters: FilterState = { signal: 'ALL', minScore: 0 };
+  // Signals — updates from out-of-zone Firestore callbacks are picked up automatically
+  allTrades = signal<StockSignal[]>([]);
+  loading = signal(true);
+  error = signal<string | null>(null);
+
+  private activeFilters = signal<FilterState>({ signal: 'ALL', minScore: 0 });
+
+  filteredTrades = computed(() => {
+    const filters = this.activeFilters();
+    return this.allTrades().filter((t) => {
+      const signalOk = filters.signal === 'ALL' || t.signal === filters.signal;
+      const scoreOk = (t.setupScore ?? 0) >= filters.minScore;
+      return signalOk && scoreOk;
+    });
+  });
+
   private sub!: Subscription;
 
   constructor(private stockService: StockService) {}
@@ -85,13 +96,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sub = this.stockService.getSwingTrades().subscribe({
       next: (trades) => {
-        this.allTrades = trades;
-        this.applyFilters();
-        this.loading = false;
+        this.allTrades.set(trades);
+        this.loading.set(false);
       },
       error: (err) => {
-        this.error = 'Failed to load trades. Check your Firebase configuration.';
-        this.loading = false;
+        this.error.set('Failed to load trades. Check your Firebase configuration.');
+        this.loading.set(false);
         console.error(err);
       },
     });
@@ -102,16 +112,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onFilterChange(filters: FilterState) {
-    this.activeFilters = filters;
-    this.applyFilters();
-  }
-
-  private applyFilters() {
-    this.filteredTrades = this.allTrades.filter((t) => {
-      const signalOk =
-        this.activeFilters.signal === 'ALL' || t.signal === this.activeFilters.signal;
-      const scoreOk = (t.setupScore ?? 0) >= this.activeFilters.minScore;
-      return signalOk && scoreOk;
-    });
+    this.activeFilters.set(filters);
   }
 }
