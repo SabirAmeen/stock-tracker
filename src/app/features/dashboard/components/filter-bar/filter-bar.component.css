@@ -1,0 +1,114 @@
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-label strong {
+  color: var(--accent-blue);
+  font-size: 0.85rem;
+}
+
+.chip-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chip {
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.chip:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+.chip.all.active  { background: rgba(88,166,255,0.15); border-color: var(--accent-blue); color: var(--accent-blue); }
+.chip.buy.active  { background: rgba(63,185,80,0.15); border-color: var(--accent-green); color: var(--accent-green); }
+.chip.neutral.active { background: rgba(210,153,34,0.15); border-color: var(--accent-amber); color: var(--accent-amber); }
+
+/* Slider */
+.slider-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.score-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-color);
+  outline: none;
+  cursor: pointer;
+}
+
+.score-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(88,166,255,0.2);
+  transition: box-shadow 0.2s;
+}
+
+.score-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px rgba(88,166,255,0.3);
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.reset-btn {
+  margin-left: auto;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.reset-btn:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
