@@ -62,7 +62,7 @@ export class FilterBarComponent {
 
   signalOptions = [
     { value: 'ALL' as const, label: 'All', cls: 'all' },
-    { value: 'BUY_SETUP' as const, label: '🚀 BUY Setup', cls: 'buy' },
+    { value: 'BUY' as const, label: '🚀 BUY Setup', cls: 'buy' },
     { value: 'NO_SETUP' as const, label: '⏳ No Setup', cls: 'neutral' },
   ];
 
