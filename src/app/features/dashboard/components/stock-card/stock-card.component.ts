@@ -123,7 +123,7 @@ export class StockCardComponent {
   }
 
   get signalClass(): string {
-    return this.trade.signal === 'BUY_SETUP' ? 'badge-buy' : 'badge-neutral';
+    return this.trade.signal === 'BUY' ? 'badge-buy' : 'badge-neutral';
   }
 
   get signalLabel(): string {
