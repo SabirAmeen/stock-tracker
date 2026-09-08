@@ -72,18 +72,20 @@ import { StockSignal } from '../../../../core/models/stock-signal.model';
       <!-- Expanded: Pattern Tags + full metrics -->
       @if (expanded()) {
         <div class="expanded-section" (click)="$event.stopPropagation()">
-          <div class="pattern-tags">
-            <span class="tag-label">Patterns</span>
-            @if (trade.patterns.isHammer) {
-              <span class="pattern-tag">🔨 Hammer</span>
-            }
-            @if (trade.patterns.isBullishEngulfing) {
-              <span class="pattern-tag">🕯️ Bullish Engulfing</span>
-            }
-            @if (!trade.patterns.isHammer && !trade.patterns.isBullishEngulfing) {
-              <span class="pattern-none">No named patterns</span>
-            }
-          </div>
+          @if (trade.patterns) {
+            <div class="pattern-tags">
+              <span class="tag-label">Patterns</span>
+              @if (trade.patterns.isHammer) {
+                <span class="pattern-tag">🔨 Hammer</span>
+              }
+              @if (trade.patterns.isBullishEngulfing) {
+                <span class="pattern-tag">🕯️ Bullish Engulfing</span>
+              }
+              @if (!trade.patterns.isHammer && !trade.patterns.isBullishEngulfing) {
+                <span class="pattern-none">No named patterns</span>
+              }
+            </div>
+          }
 
           <div class="extended-metrics">
             <div class="ext-metric">
@@ -95,6 +97,10 @@ import { StockSignal } from '../../../../core/models/stock-signal.model';
               <span class="ext-value">₹{{ trade.metrics.ema20 | number:'1.0-2' }}</span>
             </div>
             <div class="ext-metric">
+              <span class="ext-label">SMA 50</span>
+              <span class="ext-value">₹{{ trade.metrics.sma50 | number:'1.0-2' }}</span>
+            </div>
+            <div class="ext-metric">
               <span class="ext-label">SMA 200</span>
               <span class="ext-value">₹{{ trade.metrics.sma200 | number:'1.0-2' }}</span>
             </div>
@@ -103,6 +109,18 @@ import { StockSignal } from '../../../../core/models/stock-signal.model';
               <span class="ext-value" [class.surge]="trade.checks.isVolumeSurge">
                 {{ trade.metrics.volumeMultiple | number:'1.2-2' }}x
               </span>
+            </div>
+            <div class="ext-metric">
+              <span class="ext-label">Pivot PP</span>
+              <span class="ext-value">₹{{ trade.metrics.pivot_PP | number:'1.0-2' }}</span>
+            </div>
+            <div class="ext-metric">
+              <span class="ext-label">Pivot S1</span>
+              <span class="ext-value">₹{{ trade.metrics.pivot_S1 | number:'1.0-2' }}</span>
+            </div>
+            <div class="ext-metric">
+              <span class="ext-label">Pivot R1</span>
+              <span class="ext-value">₹{{ trade.metrics.pivot_R1 | number:'1.0-2' }}</span>
             </div>
           </div>
         </div>
@@ -159,13 +177,19 @@ export class StockCardComponent {
   get checkItems() {
     const c = this.trade.checks;
     return [
-      { label: 'Macro Uptrend', value: c.isMacroUptrend },
+      { label: 'Liquid', value: c.isLiquid },
+      { label: 'Healthy Trend', value: c.isHealthyTrend },
+      { label: 'EMA Rising', value: c.isEmaRising },
       { label: 'Uptrend', value: c.isUptrend },
       { label: 'Valid Pullback', value: c.isValidPullback },
       { label: 'Breaks Prev High', value: c.breaksPrevHigh },
+      { label: 'Adequate Volume', value: c.hasAdequateVolume },
+      { label: 'Low Vol Pullback', value: c.wasPullbackLowVolume },
       { label: 'Overhead Room', value: c.hasOverheadRoom },
       { label: 'Volume Surge', value: c.isVolumeSurge },
       { label: 'MACD Bullish', value: c.isMacdBullish },
+      { label: 'RSI Hooked Up', value: c.rsiHookedUp },
+      { label: 'Pivot Confluence', value: c.hasPivotConfluence },
     ];
   }
 

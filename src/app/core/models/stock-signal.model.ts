@@ -5,13 +5,19 @@ export interface Patterns {
 }
 
 export interface Checks {
-  isMacroUptrend: boolean;
+  isLiquid: boolean;
+  isHealthyTrend: boolean;
+  isEmaRising: boolean;
   isUptrend: boolean;
   isValidPullback: boolean;
   breaksPrevHigh: boolean;
+  hasAdequateVolume: boolean;
+  wasPullbackLowVolume: boolean;
   hasOverheadRoom: boolean;
   isVolumeSurge: boolean;
   isMacdBullish: boolean;
+  rsiHookedUp: boolean;
+  hasPivotConfluence: boolean;
 }
 
 export interface Metrics {
@@ -20,7 +26,11 @@ export interface Metrics {
   volumeMultiple: number;
   rsi: number;
   ema20: number;
+  sma50: number;
   sma200: number;
+  pivot_PP: number;
+  pivot_S1: number;
+  pivot_R1: number;
 }
 
 export interface StockSignal {
@@ -32,7 +42,7 @@ export interface StockSignal {
   stopLoss: number;
   target1: number;
   target2: number;
-  patterns: Patterns;
+  patterns?: Patterns;
   checks: Checks;
   metrics: Metrics;
 }
