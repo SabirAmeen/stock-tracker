@@ -51,7 +51,7 @@ export class StatsBarComponent {
   @Input() trades: StockSignal[] = [];
 
   get buySetupCount(): number {
-    return this.trades.filter((t) => t.signal === 'BUY_SETUP').length;
+    return this.trades.filter((t) => t.signal === 'BUY').length;
   }
 
   get noSetupCount(): number {
