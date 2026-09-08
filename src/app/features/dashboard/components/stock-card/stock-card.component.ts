@@ -127,7 +127,7 @@ export class StockCardComponent {
   }
 
   get signalLabel(): string {
-    return this.trade.signal === 'BUY_SETUP' ? 'BUY SETUP' : 'NO SETUP';
+    return this.trade.signal === 'BUY' ? 'BUY SETUP' : 'NO SETUP';
   }
 
   get ringDash(): string {
