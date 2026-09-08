@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 export interface FilterState {
-  signal: 'ALL' | 'BUY_SETUP' | 'NO_SETUP';
+  signal: 'ALL' | 'BUY' | 'NO_SETUP';
   minScore: number;
 }
 
