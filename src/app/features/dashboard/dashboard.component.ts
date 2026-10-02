@@ -82,11 +82,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   filteredTrades = computed(() => {
     const filters = this.activeFilters();
-    return this.allTrades().filter((t) => {
-      const signalOk = filters.signal === 'ALL' || t.signal === filters.signal;
-      const scoreOk = (t.setupScore ?? 0) >= filters.minScore;
-      return signalOk && scoreOk;
-    });
+    return this.allTrades()
+      .filter((t) => {
+        const signalOk = filters.signal === 'ALL' || t.signal === filters.signal;
+        const scoreOk = (t.setupScore ?? 0) >= filters.minScore;
+        return signalOk && scoreOk;
+      })
+      .sort((a, b) => {
+        if (a.signal === 'BUY_SETUP' && b.signal !== 'BUY_SETUP') return -1;
+        if (a.signal !== 'BUY_SETUP' && b.signal === 'BUY_SETUP') return 1;
+        return 0;
+      });
   });
 
   private sub!: Subscription;
