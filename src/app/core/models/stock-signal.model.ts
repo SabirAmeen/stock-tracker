@@ -36,7 +36,7 @@ export interface Metrics {
 export interface StockSignal {
   id: string;
   symbol: string;
-  signal: 'BUY_SETUP' | 'NO_SETUP' | string;
+  signal: 'BUY' | 'NO_SETUP' | string;
   setupScore: number;
   entryPrice: number;
   stopLoss: number;

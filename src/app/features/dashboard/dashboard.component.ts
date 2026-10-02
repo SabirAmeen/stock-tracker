@@ -89,8 +89,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return signalOk && scoreOk;
       })
       .sort((a, b) => {
-        if (a.signal === 'BUY_SETUP' && b.signal !== 'BUY_SETUP') return -1;
-        if (a.signal !== 'BUY_SETUP' && b.signal === 'BUY_SETUP') return 1;
+        if (a.signal === 'BUY' && b.signal !== 'BUY') return -1;
+        if (a.signal !== 'BUY' && b.signal === 'BUY') return 1;
         return 0;
       });
   });
