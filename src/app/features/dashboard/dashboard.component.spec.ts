@@ -75,21 +75,30 @@ describe('DashboardComponent', () => {
     comp.ngOnInit();
 
     // Filter by BUY only
-    comp.onFilterChange({ signal: 'BUY', minScore: 0 });
+    comp.onFilterChange({ signal: 'BUY', minScore: 0, stock: 'ALL' });
     let filtered = comp.filteredTrades();
     expect(filtered.length).toBe(1);
     expect(filtered[0].symbol).toBe('TCS');
 
     // Filter by minScore higher than INFY
-    comp.onFilterChange({ signal: 'ALL', minScore: 50 });
+    comp.onFilterChange({ signal: 'ALL', minScore: 50, stock: 'ALL' });
     filtered = comp.filteredTrades();
     expect(filtered.length).toBe(1);
     expect(filtered[0].symbol).toBe('TCS');
 
+    // Filter by specific stock
+    comp.onFilterChange({ signal: 'ALL', minScore: 0, stock: 'INFY' });
+    filtered = comp.filteredTrades();
+    expect(filtered.length).toBe(1);
+    expect(filtered[0].symbol).toBe('INFY');
+
     // Filter by minScore higher than any
-    comp.onFilterChange({ signal: 'ALL', minScore: 90 });
+    comp.onFilterChange({ signal: 'ALL', minScore: 90, stock: 'ALL' });
     filtered = comp.filteredTrades();
     expect(filtered.length).toBe(0);
+
+    // Verify availableStocks computed list
+    expect(comp.availableStocks()).toEqual(['INFY', 'TCS']);
 
     comp.ngOnDestroy();
   });

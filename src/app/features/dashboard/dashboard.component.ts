@@ -33,7 +33,10 @@ import { StockCardComponent } from './components/stock-card/stock-card.component
       <app-stats-bar [trades]="filteredTrades()"></app-stats-bar>
 
       <!-- Filters -->
-      <app-filter-bar (filterChange)="onFilterChange($event)"></app-filter-bar>
+      <app-filter-bar
+        [stocks]="availableStocks()"
+        (filterChange)="onFilterChange($event)"
+      ></app-filter-bar>
 
       <!-- Loading State -->
       @if (loading()) {
@@ -56,7 +59,7 @@ import { StockCardComponent } from './components/stock-card/stock-card.component
         <div class="empty-state">
           <span class="empty-icon">🔍</span>
           <p>No trades match your current filters.</p>
-          <p class="empty-hint">Try adjusting the signal type or lowering the min score.</p>
+          <p class="empty-hint">Try adjusting the signal type, stock selection, or lowering the min score.</p>
         </div>
       }
 
@@ -78,15 +81,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loading = signal(true);
   error = signal<string | null>(null);
 
-  private activeFilters = signal<FilterState>({ signal: 'ALL', minScore: 0 });
+  private activeFilters = signal<FilterState>({ signal: 'ALL', minScore: 0, stock: 'ALL' });
+
+  availableStocks = computed(() => {
+    const symbols = this.allTrades()
+      .map((t) => t.symbol)
+      .filter((s): s is string => Boolean(s));
+    return Array.from(new Set(symbols)).sort((a, b) => a.localeCompare(b));
+  });
 
   filteredTrades = computed(() => {
     const filters = this.activeFilters();
     return this.allTrades()
       .filter((t) => {
+        const stockOk = filters.stock === 'ALL' || t.symbol === filters.stock;
         const signalOk = filters.signal === 'ALL' || t.signal === filters.signal;
         const scoreOk = (t.setupScore ?? 0) >= filters.minScore;
-        return signalOk && scoreOk;
+        return stockOk && signalOk && scoreOk;
       })
       .sort((a, b) => {
         if (a.signal === 'BUY' && b.signal !== 'BUY') return -1;

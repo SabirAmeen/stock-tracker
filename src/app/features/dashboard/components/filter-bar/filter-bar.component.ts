@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 export interface FilterState {
   signal: 'ALL' | 'BUY' | 'NO_SETUP';
   minScore: number;
+  stock: string;
 }
 
 @Component({
@@ -13,6 +14,21 @@ export interface FilterState {
   imports: [CommonModule, FormsModule],
   template: `
     <div class="filter-bar">
+      <div class="filter-section">
+        <label for="stock-select" class="filter-label">Stock</label>
+        <div class="select-wrap">
+          <select
+            id="stock-select"
+            class="stock-select"
+            [(ngModel)]="filters.stock"
+            (ngModelChange)="emit()"
+          >
+            <option value="ALL">All Stocks</option>
+            <option *ngFor="let s of stocks" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+      </div>
+
       <div class="filter-section">
         <span class="filter-label">Signal</span>
         <div class="chip-group">
@@ -56,9 +72,10 @@ export interface FilterState {
   styleUrls: ['./filter-bar.component.css'],
 })
 export class FilterBarComponent {
+  @Input() stocks: string[] = [];
   @Output() filterChange = new EventEmitter<FilterState>();
 
-  filters: FilterState = { signal: 'ALL', minScore: 0 };
+  filters: FilterState = { signal: 'ALL', minScore: 0, stock: 'ALL' };
 
   signalOptions = [
     { value: 'ALL' as const, label: 'All', cls: 'all' },
@@ -71,8 +88,13 @@ export class FilterBarComponent {
     this.emit();
   }
 
+  setStock(stock: string) {
+    this.filters.stock = stock;
+    this.emit();
+  }
+
   reset() {
-    this.filters = { signal: 'ALL', minScore: 0 };
+    this.filters = { signal: 'ALL', minScore: 0, stock: 'ALL' };
     this.emit();
   }
 
@@ -80,3 +102,4 @@ export class FilterBarComponent {
     this.filterChange.emit({ ...this.filters });
   }
 }
+
